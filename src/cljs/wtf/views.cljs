@@ -8,4 +8,5 @@
   (let [name (re-frame/subscribe [::subs/name])]
     [:div
      [:h1 "Heello froem " @name]
+     [:button {:on-click #(re-frame/dispatch [:refresh-app-infos] )}]
      ]))

@@ -1,4 +1,7 @@
 (ns wtf.db)
 
 (def default-db
-  {:name "re-frameee"})
+  {:name "re-framee"
+   :app-infos {}
+   :selected-paths []
+   :subbed-params {}})
