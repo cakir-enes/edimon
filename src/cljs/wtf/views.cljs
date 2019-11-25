@@ -22,20 +22,33 @@
 
 (defn search-box []
   (let [query (rf/subscribe [::subs/query])]
-    [:p "Search..." 
+    [:div  {:class "bg-red" :style {:text-align "center"}}
+     
      [:input {:type "text" 
               :value @query 
               :on-change #(rf/dispatch [:query-changed (-> % .-target .-value)])}]]))
 
 (defn main-panel []
   (let [appz (rf/subscribe [::subs/visible-paths])
-        vec->list (fn [paths] [:ul (for [path paths] ^{:key path} [:li path])])]
-  
-    [:div
+        checks {}
+        vec->list (fn [paths]
+                    [:ul (for [path paths]
+                           (do (assoc checks path (r/atom false))
+                               ^{:key path}
+                              [:div
+                                    [:input {:type "checkbox"
+                                             :checked (get checks path)
+                                             :on-click #(update checks swap! not)}]
+                                    [:label path]]))])]
+    
+    [:div {:class "bg-gold sans-serif center"}
      [search-box]
-     [:ul
+     [:ul {:class "mw9 center ph3-ns"
+           :style {:display "grid"
+                   :grid-template-columns "1fr 1fr"
+                   :grid-gap "10px"}}
       (for [[name paths] @appz]
-        ^{:key name} [:li name [vec->list paths]])]]))
+        ^{:key name} [:li {:style {:display "inline-block" :color "#fff" :background-color "#111"}} name [vec->list paths]])]]))
 
 
 ; (defn app-info-panel []
