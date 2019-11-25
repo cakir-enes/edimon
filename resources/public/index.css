@@ -2,3 +2,7 @@ texto {
     color: red;
     border: red;
 }
+
+.search-container {
+    background: goldenrod;
+}
