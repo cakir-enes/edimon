@@ -3,10 +3,12 @@
    [re-frame.core :as re-frame]
    [wtf.trie :as trie]))
 
-(defn map-to-html-list [m]
-  (into [:ul]
-        (for [[k v] m]
-          (when-not (empty? v) [:li (str k) (map-to-html-list v)]))))
+
+(defn toggle! [node]
+ (swap! (:status node) not)
+  ())
+
+
 
 (re-frame/reg-sub
  ::name
@@ -19,17 +21,40 @@
     (map (fn [[app-name paths]] {app-name (trie/build paths)}))
    (reduce merge)))
 
-(re-frame/reg-sub
- :app-infos
- (fn [db]
-   (app-infos->trie (:app-infos db))))
 
 (re-frame/reg-sub
- :selected-paths
+ ::app-infos
+ (fn [db]
+   (reduce (fn [m [app-name info]] 
+             (assoc m app-name (map :path (:params info)))) 
+           {} 
+           (:app-infos db))))
+
+; (re-frame/reg-sub
+;  :app-infos
+;  (fn [db]
+;    (app-infos->trie (:app-infos db))))
+
+(re-frame/reg-sub
+ ::selected-paths
  (fn [db]
    (:selected-paths db)))
 
 (re-frame/reg-sub
- :subbed-params
+ ::subbed-params
  (fn [db]
    (:subbed-params db)))
+
+(re-frame/reg-sub
+ ::query
+ (fn [db]
+   (:query db)))
+
+(re-frame/reg-sub
+ ::visible-paths
+ (fn [db]
+   (reduce-kv (fn [m k v] 
+                (assoc m k 
+                       (filter #(clojure.string/includes? % (:query db)) (map :path (:params v)))))
+              {}
+              (:app-infos db))))

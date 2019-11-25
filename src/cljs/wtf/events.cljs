@@ -27,4 +27,9 @@
  (fn [db [_ [path new-val]]]
    (assoc-in db [:subbed-params (keyword path)] new-val)))
 
+(rf/reg-event-db
+ :query-changed
+ (fn [db [_ new-query]]
+   (assoc db :query new-query)))
+
 

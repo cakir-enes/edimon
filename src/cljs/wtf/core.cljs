@@ -4,8 +4,7 @@
    [re-frame.core :as re-frame]
    [wtf.events :as events]
    [wtf.views :as views]
-   [wtf.config :as config]
-   ))
+   [wtf.config :as config]))
 
 
 (defn dev-setup []
