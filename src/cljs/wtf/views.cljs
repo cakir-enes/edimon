@@ -72,9 +72,44 @@
                                           :color "black"}} name]
                       [vec->list name paths]])]]))
 
+(defonce subz (r/atom {}))
+
+(def click-count (r/atom {}))
+
+(defn counting-component []
+  [:ul 
+   (doall
+    (for [c [:c1 :c2 :c3]]
+      (do
+        (swap! click-count assoc c (r/atom 0))
+        ^{:key c}
+        [:div
+         "The atom " [:code "click-count " c] " has value: "
+         @(get @click-count c) ". "
+         [:input {:type "button" :value "Click me!"
+                  :on-click #(swap! (get @click-count c) inc)}]])))])
+
+(defn subs-panel []
+  (let [params (rf/subscribe [::subs/subbed-params])
+        prepend (fn [app-name param] (update param :path #(str app-name "." %)))]
+    [:div 
+     [counting-component]
+     [:ul
+      (doall 
+        (for [{:keys [path type]} (reduce-kv (fn [v app-name params] (concat v (map #(prepend app-name %) params))) [] @params)] 
+          (do 
+            (swap! subz assoc path (r/atom "valval"))
+            ^{:key path}
+            [:div {:style {:display "grid" :grid-template-columns "3fr 1fr 1fr"}}
+             [:h4 path]
+             [:h4 @(get @subz path)]
+             [:h4 type]])))]]))
+
 (defn main-panel []
   [:link {:rel "stylesheet" :href "/Users/ecakir/Projects/wtf/resources/public/index.css"}]
-  [selection-panel])
+  [:div 
+   [selection-panel]
+   [subs-panel]])
 
 
 

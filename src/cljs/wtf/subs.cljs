@@ -43,7 +43,12 @@
 (re-frame/reg-sub
  ::subbed-params
  (fn [db]
-   (:subbed-params db)))
+   (->>
+    (:selected-paths db)
+    (reduce-kv (fn [m app-name paths]
+                 (let [params (reduce (fn [m param] (assoc m (:path param) param)) {} (get-in db [:app-infos app-name :params]))]
+                   (assoc m app-name (map #(get params %) paths))))
+               {}))))
 
 (re-frame/reg-sub
  ::query
