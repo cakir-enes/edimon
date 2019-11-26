@@ -4,5 +4,11 @@ texto {
 }
 
 .search-container {
-    background: goldenrod;
+    background: goldenrod;   
 }
+
+input[type=checkbox], input[type=radio] {
+    vertical-align: middle; 
+    position: relative;
+    /* bottom: .08em; this is a better value for different fonts! */
+  }
